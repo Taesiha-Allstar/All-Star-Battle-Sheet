@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --font-sans:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+      --font-display:'Poppins',var(--font-sans);
+      --void:#FFF8FA;
+      --panel:#FFFFFF;
+      --panel-2:#FBEAF0;
+      --panel-hover:#F7DCE6;
+      --line:#F1D8E2;
+      --hi:#5B4351;
+      --lo:#A58491;
+      --faint:#CDB1BD;
+      --brand:#E8628F;
+      --gold:#F0B27E;
+      --win:#E8628F;
+      --lose:#F2828C;
+      --str:#F2828C;
+      --agi:#7FCBA4;
+      --int:#8FB2E8;
+      --favor:#4C86E0;
+    }
+    html,body{ background:var(--void); color:var(--hi); font-family:var(--font-sans); }
+    body{
+      background:
+        radial-gradient(circle at 12% -10%, rgba(232,98,143,.07), transparent 42%),
+        radial-gradient(circle at 92% 0%, rgba(240,178,126,.07), transparent 40%),
+        var(--void);
+      min-height:100vh;
+    }
+
+    .t-hi{ color:var(--hi); } .t-lo{ color:var(--lo); } .t-faint{ color:var(--faint); }
+    .t-brand{ color:var(--brand); } .t-gold{ color:var(--gold); } .t-win{ color:var(--win); }
+    .t-lose{ color:var(--lose); } .t-str{ color:var(--str); } .t-agi{ color:var(--agi); } .t-int{ color:var(--int); }
+    .num{ font-family:var(--font-display); font-weight:500; letter-spacing:.02em; }
+    .brd{ border-color:var(--line) !important; }
+
+    .card{ background:var(--panel); border:1px solid var(--line); box-shadow:0 2px 10px rgba(91,67,81,.05); }
+    .hof-card{ transition:.15s; }
+    .hof-card:hover{ border-color:var(--brand); }
+    .card table thead{ background:var(--panel-2); color:var(--lo); font-size:.7rem; font-weight:600; letter-spacing:.02em; border-bottom:1px solid var(--line); }
+    .card table tbody tr{ border-bottom:1px solid var(--line); color:var(--lo); }
+    .card table tbody tr:hover{ background:var(--panel-hover); }
+
+    .win-text{ color:var(--brand); font-weight:500; font-family:var(--font-display); }
+    .accordion-toggle{ cursor:pointer; transition:.15s; }
+    .accordion-toggle:hover{ background:var(--panel-hover); }
+    .hover-row{ transition:.15s; }
+    .hover-row:hover{ background:var(--panel-hover); }
+    .sub-row{ background:rgba(255,255,255,.02); display:none; font-size:.75rem; color:var(--faint); }
+    .badge-total{ background:var(--panel-2); color:var(--lo); border:1px solid var(--line); }
+
+    .attr-힘{ color:var(--str); background:rgba(242,130,140,.15); font-size:.68rem; padding:1.5px 6px; border-radius:4px; font-weight:500; margin-left:4.5px; vertical-align:middle; }
+    .attr-민첩{ color:var(--agi); background:rgba(127,203,164,.15); font-size:.68rem; padding:1.5px 6px; border-radius:4px; font-weight:500; margin-left:4.5px; vertical-align:middle; }
+    .attr-지능{ color:var(--int); background:rgba(143,178,232,.15); font-size:.68rem; padding:1.5px 6px; border-radius:4px; font-weight:500; margin-left:4.5px; vertical-align:middle; }
+    .attr-기타{ color:var(--lo); background:var(--panel-2); font-size:.68rem; padding:1.5px 6px; border-radius:4px; font-weight:500; margin-left:4.5px; vertical-align:middle; }
+
+    .tier-OP{ color:#5B4351; font-weight:600; background:var(--gold); padding:2px 10px; border-radius:9999px; }
+    .tier-1티어{ color:var(--int); font-weight:600; background:rgba(143,178,232,.15); padding:2px 10px; border-radius:9999px; }
+    .tier-2티어{ color:var(--brand); font-weight:600; background:rgba(232,98,143,.15); padding:2px 10px; border-radius:9999px; }
+    .tier-3티어{ color:#F0A15E; font-weight:600; background:rgba(240,161,94,.15); padding:2px 10px; border-radius:9999px; }
+    .tier-4티어{ color:var(--lo); font-weight:600; background:var(--panel-2); padding:2px 10px; border-radius:9999px; }
+    .tier-똥{ color:#C99586; font-weight:600; background:rgba(138,107,58,.2); border:1px solid #B98A72; padding:2px 10px; border-radius:9999px; }
+
+    .topbar{ background:var(--panel); border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
+    .topbar::before{ content:''; position:absolute; top:-60%; left:-10%; width:420px; height:420px; background:radial-gradient(circle, rgba(240,178,126,.14), transparent 65%); pointer-events:none; }
+    .topbar::after{ content:''; position:absolute; bottom:-70%; right:5%; width:380px; height:380px; background:radial-gradient(circle, rgba(232,98,143,.12), transparent 65%); pointer-events:none; }
+    .brand-title{ font-family:'Rajdhani',var(--font-sans); letter-spacing:.02em; }
+    .season-pill{ background:var(--panel-2); border:1px solid var(--line); border-radius:9999px; padding:.4rem 1rem; }
+    .season-pill select{ background:transparent; border:none; color:var(--hi); font-weight:500; outline:none; cursor:pointer; }
+    .season-pill option{ background:var(--panel-2); color:var(--hi); }
+
+    .nav-section-label{ font-size:.62rem; font-weight:700; letter-spacing:.08em; color:var(--faint); text-transform:uppercase; padding:.9rem 1.1rem .3rem; }
+    .nav-btn{ display:flex; align-items:center; gap:.5rem; padding:.8rem 1.1rem; font-weight:500; font-size:.85rem; color:var(--lo); border-bottom:2px solid transparent; white-space:nowrap; transition:.15s; background:transparent; }
+    .nav-btn:hover{ color:var(--hi); background:var(--panel-hover); }
+    .nav-btn.tab-active{ color:var(--hi); background:var(--panel); border-color:var(--gold); }
+    @media(min-width:768px){
+      .nav-btn{ border-bottom:none; border-left:2px solid transparent; border-radius:0 10px 10px 0; width:100%; }
+      .nav-section-label:first-child{ padding-top:.4rem; }
+    }
+    @media(max-width:767px){
+      .nav-section-label{ display:none; }
+    }
+
+    .seg-track{ display:inline-flex; gap:.4rem; background:var(--panel-2); border:1px solid var(--line); padding:.35rem; border-radius:9999px; }
+    .seg-btn{ padding:.5rem 1rem; font-size:.72rem; font-weight:500; border-radius:9999px; color:var(--lo); background:transparent; transition:.15s; cursor:pointer; }
+    .seg-btn:hover{ color:var(--hi); }
+    .seg-btn.sub-toggle-active{ background:var(--gold); color:#5B4351; }
+
+    .field{ width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--hi); border-radius:.6rem; padding:.6rem .75rem; outline:none; transition:.15s; }
+    .field::placeholder{ color:var(--faint); }
+    .field:focus{ border-color:var(--brand); box-shadow:0 0 0 3px rgba(232,98,143,.18); }
+    .field-sm{ background:var(--panel-2); border:1px solid var(--line); color:var(--hi); border-radius:.4rem; padding:.3rem .4rem; font-size:.75rem; outline:none; }
+
+    .btn-primary{ background:var(--gold); color:#5B4351; font-weight:600; border:none; cursor:pointer; transition:.15s; }
+    .btn-primary:hover{ filter:brightness(1.08); }
+    .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+    .btn-outline{ background:transparent; border:1px solid var(--line); color:var(--hi); font-weight:500; transition:.15s; cursor:pointer; }
+    .btn-outline:hover{ border-color:var(--gold); color:var(--gold); }
+
+    .dropzone{ border:2px dashed var(--line); background:var(--panel-2); transition:.15s; }
+    .dropzone:hover{ border-color:var(--brand); background:var(--panel-hover); }
+
+    .team-win-panel{ background:var(--panel); border-top:3px solid var(--brand); }
+    .team-lose-panel{ background:var(--panel); border-top:3px solid var(--lose); }
+    .match-head{ background:var(--panel-2); color:var(--lo); }
+    .mvp-chip{ background:var(--gold); color:#5B4351; font-size:10px; font-weight:600; padding:1px 6px; border-radius:4px; margin-left:4px; }
+    .win-pct-chip{ font-size:.72rem; font-weight:700; padding:2px 9px; border-radius:9999px; font-family:var(--font-display); }
+    .upset-badge{ background:rgba(240,178,126,.18); color:var(--gold); font-size:10px; font-weight:700; padding:2px 8px; border-radius:9999px; margin-left:8px; }
+    .lane-pct-chip{ display:inline-flex; align-items:center; gap:2px; font-size:.66rem; font-weight:700; font-family:var(--font-display); padding:2px 7px; border-radius:9999px; white-space:nowrap; }
+    .lane-pct-fav{ background:rgba(76,134,224,.14); color:var(--favor); }
+    .lane-pct-unfav{ background:rgba(242,130,140,.14); color:var(--lose); }
+    .lane-pct-neutral{ background:rgba(165,132,145,.10); color:var(--lo); }
+
+    .summary-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:.9rem; padding:.85rem; }
+    .summary-card .cat-title{ font-size:.7rem; font-weight:600; color:var(--faint); margin-bottom:.5rem; }
+    .summary-item{ display:flex; justify-content:space-between; align-items:center; background:var(--panel); padding:.45rem .6rem; border-radius:.6rem; border:1px solid var(--line); }
+    .summary-value-chip{ font-size:.7rem; font-weight:600; color:var(--gold); background:rgba(240,178,126,.12); padding:2px 8px; border-radius:6px; }
+
+    .stat-bar-track{ width:100%; height:.7rem; border-radius:9999px; overflow:hidden; background:var(--panel-2); }
+    .stat-bar-fill{ height:100%; border-radius:9999px; transition:width 1s; }
+
+    .streak-card{ border-radius:1rem; padding:.9rem; text-align:center; border:1px solid var(--line); background:var(--panel-2); }
+    .streak-card .lbl{ font-size:.68rem; font-weight:600; margin-bottom:.15rem; }
+    .streak-card .val{ font-size:1.25rem; font-weight:500; font-family:var(--font-display); }
+    .streak-brand .val, .streak-brand .lbl{ color:var(--brand); }
+    .streak-gold{ border-color:rgba(240,178,126,.4); background:rgba(240,178,126,.08); }
+    .streak-gold .val, .streak-gold .lbl{ color:var(--gold); }
+    .streak-lose .val, .streak-lose .lbl{ color:var(--lose); }
+    .streak-lose-max{ border-color:rgba(242,130,140,.4); background:rgba(242,130,140,.1); }
+    .streak-lose-max .val, .streak-lose-max .lbl{ color:var(--lose); }
+
+    .spinner{ border-color:var(--panel-2); border-bottom-color:var(--gold); }
+    ::-webkit-scrollbar{ height:8px; width:8px; }
+    ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:9999px; }
+
+    /* 비밀번호 확인용 중앙 모달 */
+    #pw-modal-overlay{ background:rgba(91,67,81,.4); backdrop-filter:blur(2px); }
+    #pw-modal-box{ animation:pwPopIn .15s ease-out; }
+    @keyframes pwPopIn{ from{ transform:scale(.95); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen flex flex-col">
+
+    <header class="topbar flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-6 gap-4">
+      <div class="text-center md:text-left relative z-10">
+        <h1 class="brand-title text-3xl md:text-4xl font-medium tracking-tight t-hi">All-Star Battle <span class="t-gold">Global Stats</span></h1>
+        <p class="text-sm font-semibold t-lo mt-1">Cat Community Global Dashboard</p>
+      </div>
+      <div class="season-pill relative z-10">
+        <select id="year-select" onchange="loadData()">
+          <option value="all">전체 누적 기록</option>
+          <option value="2026">2026 시즌</option>
+          <option value="2025">2025 시즌</option>
+          <option value="2024">2024 시즌</option>
+          <option value="2023">2023 시즌</option>
+          <option value="2022">2022 시즌</option>
+          <option value="2021">2021 시즌</option>
+          <option value="2020">2020 시즌</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row flex-1">
+      <nav class="flex flex-row md:flex-col overflow-x-auto md:overflow-visible md:w-56 md:py-4 md:pr-2 border-b md:border-b-0 md:border-r brd" style="background:var(--panel);">
+        <span class="nav-section-label">통계</span>
+        <button onclick="switchTab('tab-players')" id="btn-players" class="nav-btn tab-active">글로벌 유저 데이터</button>
+        <button onclick="switchTab('tab-heroes')" id="btn-heroes" class="nav-btn">캐릭터 데이터</button>
+        <button onclick="switchTab('tab-focus')" id="btn-focus" class="nav-btn">유저별 돋보기</button>
+        <button onclick="switchTab('tab-kda')" id="btn-kda" class="nav-btn">KDA 하이라이트</button>
+
+        <span class="nav-section-label">매치업 분석</span>
+        <button onclick="switchTab('tab-synergy')" id="btn-synergy" class="nav-btn">조합 시너지 티어</button>
+        <button onclick="switchTab('tab-nemesis')" id="btn-nemesis" class="nav-btn">천적 매치업</button>
+
+        <span class="nav-section-label">기록</span>
+        <button onclick="switchTab('tab-recent')" id="btn-recent" class="nav-btn">최근 매치 기록</button>
+        <button onclick="switchTab('tab-input')" id="btn-input" class="nav-btn">전적 기록하기</button>
+
+        <span class="nav-section-label">커뮤니티</span>
+        <button onclick="switchTab('tab-hof')" id="btn-hof" class="nav-btn">명예의 전당</button>
+      </nav>
+
+      <main class="flex-1 min-w-0 p-4 md:p-8">
+
+        <div id="loading" class="py-20 text-center t-lo font-medium card rounded-2xl">
+          <div class="spinner animate-spin rounded-full h-10 w-10 border-b-2 mx-auto mb-4"></div>
+          글로벌 전적 통계를 실시간으로 계산하는 중입니다...
+        </div>
+
+        <div id="tab-players" class="hidden card overflow-x-auto rounded-2xl">
+          <table class="w-full text-center border-collapse">
+            <thead><tr><th class="p-4">유저명</th><th>포지션</th><th>판수</th><th>승리</th><th>패배</th><th>승률</th><th>KDA</th><th>평균 K/D/A</th><th>MVP</th></tr></thead>
+            <tbody id="player-body"></tbody>
+          </table>
+        </div>
+
+        <div id="tab-heroes" class="hidden card overflow-x-auto rounded-2xl">
+          <table class="w-full text-center border-collapse">
+            <thead><tr><th class="p-4">티어</th><th>캐릭터명</th><th>판수</th><th>승리</th><th>패배</th><th>승률</th><th>평균 KDA</th><th>평균 K/D/A</th><th>MVP 횟수</th></tr></thead>
+            <tbody id="hero-body"></tbody>
+          </table>
+        </div>
+
+        <div id="tab-kda" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--brand);">
+            <h3 class="text-xl font-medium mb-4 t-brand">최고 KDA TOP 30</h3>
+            <table class="w-full text-sm text-center">
+              <thead><tr><th class="pb-2">순위</th><th>유저명</th><th>캐릭터명</th><th>K/D/A</th><th>KDA</th></tr></thead>
+              <tbody id="kda-best-body"></tbody>
+            </table>
+          </div>
+          <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--lose);">
+            <h3 class="text-xl font-medium mb-4 t-lose">최약 KDA TOP 30</h3>
+            <table class="w-full text-sm text-center">
+              <thead><tr><th class="pb-2">순위</th><th>유저명</th><th>캐릭터명</th><th>K/D/A</th><th>KDA</th></tr></thead>
+              <tbody id="kda-worst-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-recent" class="hidden space-y-4">
+          <div class="card p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 class="text-xl font-medium t-hi">최근 전적 상세 리포트</h3>
+              <p class="text-xs t-faint mt-0.5">매치별 승리 팀과 패배 팀, 그리고 각 기록을 확인하세요.</p>
+            </div>
+            <div class="seg-track">
+              <button id="toggle-recent-10" onclick="setRecentMatchLimit(10)" class="seg-btn sub-toggle-active">최근 10판</button>
+              <button id="toggle-recent-50" onclick="setRecentMatchLimit(50)" class="seg-btn">최근 50판</button>
+            </div>
+          </div>
+          <div id="recent-matches-container" class="space-y-6"></div>
+        </div>
+
+        <div id="tab-hof" class="hidden card p-6 rounded-2xl space-y-6">
+          <div class="border-b brd pb-4 flex justify-between items-end">
+            <div>
+              <h3 class="text-xl font-medium t-hi">명예의 전당 갤러리</h3>
+              <p class="text-xs t-faint mt-1">기억하고 싶은 최고의 순간이나 스크린샷을 등록하세요.</p>
+            </div>
+            <button onclick="document.getElementById('hof-file-input').click()" class="btn-primary py-2 px-4 rounded-lg text-sm">사진 올리기</button>
+            <input type="file" id="hof-file-input" accept="image/*" onchange="uploadHofImage(this)" class="hidden">
+          </div>
+          <div id="hof-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="tab-synergy" class="hidden space-y-6">
+          <div class="seg-track">
+            <button id="toggle-syn-hero" onclick="switchSynergyType('hero')" class="seg-btn sub-toggle-active">캐릭터 조합</button>
+            <button id="toggle-syn-user" onclick="switchSynergyType('user')" class="seg-btn">유저 조합</button>
+            <button id="toggle-syn-attr" onclick="switchSynergyType('attr')" class="seg-btn">속성 조합</button>
+          </div>
+
+          <div id="synergy-grid-frame" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--win);">
+              <div class="mb-2">
+                <h3 id="syn-best-title" class="text-xl font-medium t-win">추천 꿀조합 듀오 TOP 20</h3>
+                <p class="text-xs t-faint mt-0.5" id="syn-best-desc">함께 묶였을 때 동반 승률이 최고조에 달했던 라인업</p>
+              </div>
+              <table class="w-full text-sm text-center mt-4">
+                <thead><tr><th class="pb-2">순위</th><th id="th-syn-best-name">조합 명단</th><th>세부 전적</th><th>팀 시너지 승률</th></tr></thead>
+                <tbody id="synergy-best-body"></tbody>
+              </table>
+            </div>
+
+            <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--lose);">
+              <div class="mb-2">
+                <h3 id="syn-worst-title" class="text-xl font-medium t-lose">주의 필패조합 듀오 TOP 20</h3>
+                <p class="text-xs t-faint mt-0.5" id="syn-worst-desc">같이 팀이 되었을 때 지독하게 연패했던 미스터리 라인업</p>
+              </div>
+              <table class="w-full text-sm text-center mt-4">
+                <thead><tr><th class="pb-2">순위</th><th id="th-syn-worst-name">조합 명단</th><th>세부 전적</th><th>팀 시너지 승률</th></tr></thead>
+                <tbody id="synergy-worst-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="synergy-attr-frame" class="card p-6 rounded-2xl hidden" style="border-top:3px solid var(--int);">
+            <div class="mb-2">
+              <h3 class="text-xl font-medium t-int">전체 속성 메타 시너지 랭킹</h3>
+              <p class="text-xs t-faint mt-0.5">한 팀 내 힘/민/지 영웅 조합 비율에 따른 메타별 승률 분석표</p>
+            </div>
+            <table class="w-full text-sm text-center mt-4">
+              <thead><tr><th class="p-3">순위</th><th>속성 조합 시너지</th><th>총 경기 전적</th><th>메타 평균 승률</th></tr></thead>
+              <tbody id="synergy-attr-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-nemesis" class="hidden space-y-6">
+          <div class="seg-track">
+            <button id="toggle-nem-hero" onclick="switchNemesisType('hero')" class="seg-btn sub-toggle-active">캐릭터 매치업</button>
+            <button id="toggle-nem-user" onclick="switchNemesisType('user')" class="seg-btn">유저 매치업</button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--win);">
+              <div class="mb-2">
+                <h3 id="nem-best-title" class="text-xl font-medium t-win">압도 매치업 TOP 20</h3>
+                <p class="text-xs t-faint mt-0.5">서로 다른 팀으로 만났을 때, 왼쪽 상대가 오른쪽 상대를 압도적으로 이겼던 매치업</p>
+              </div>
+              <table class="w-full text-sm text-center mt-4">
+                <thead><tr><th class="pb-2">순위</th><th>매치업</th><th>상대 전적</th><th>왼쪽 승률</th></tr></thead>
+                <tbody id="nemesis-best-body"></tbody>
+              </table>
+            </div>
+
+            <div class="card p-6 rounded-2xl" style="border-top:3px solid var(--lose);">
+              <div class="mb-2">
+                <h3 id="nem-worst-title" class="text-xl font-medium t-lose">천적 매치업 TOP 20</h3>
+                <p class="text-xs t-faint mt-0.5">서로 다른 팀으로 만났을 때, 왼쪽 상대가 오른쪽 상대에게 유독 고전했던 매치업 (오른쪽이 왼쪽의 천적)</p>
+              </div>
+              <table class="w-full text-sm text-center mt-4">
+                <thead><tr><th class="pb-2">순위</th><th>매치업</th><th>상대 전적</th><th>왼쪽 승률</th></tr></thead>
+                <tbody id="nemesis-worst-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-focus" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row items-center gap-4 card p-4 rounded-2xl">
+            <div class="flex items-center gap-2">
+              <label class="font-medium t-hi text-sm whitespace-nowrap">유저 선택 :</label>
+              <select id="user-profile-select" onchange="renderUserProfile()" class="field font-semibold"></select>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="font-medium t-hi text-sm whitespace-nowrap">분석 기준 :</label>
+              <select id="stat-type-select" onchange="renderUserProfile()" class="field font-semibold">
+                <option value="summary">간단 종합 리포트</option>
+                <option value="most">가장 많이 플레이한 캐릭터</option>
+                <option value="bestWin">최고 승률 캐릭터</option>
+                <option value="bestKda">최고 KDA 캐릭터</option>
+                <option value="worstWin">최악 승률 캐릭터</option>
+                <option value="worstKda">최악 KDA 캐릭터</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="profile-content" class="card p-5 rounded-2xl overflow-x-auto hidden">
+            <h3 id="focus-table-title" class="text-lg font-medium t-hi mb-3 border-b brd pb-2">캐릭터 랭킹 보드</h3>
+            <table class="w-full text-sm text-center">
+              <thead><tr><th class="p-2.5 rounded-l-lg">순위</th><th>캐릭터명</th><th>판수 (승/패)</th><th>승률</th><th class="rounded-r-lg">평균 KDA</th></tr></thead>
+              <tbody id="prof-most-table"></tbody>
+            </table>
+          </div>
+
+          <div id="profile-summary-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
+            <div class="card p-6 rounded-2xl space-y-4">
+              <h3 class="text-lg font-medium t-hi border-b brd pb-2">부문별 핵심 요약 TOP 3</h3>
+              <div id="summary-cards-container" class="space-y-4"></div>
+            </div>
+
+            <div class="card p-6 rounded-2xl space-y-6">
+              <div>
+                <h3 class="text-lg font-medium t-hi border-b brd pb-2">주속성별 플레이 성향 및 승률</h3>
+                <div id="summary-attr-graph-container" class="mt-4 space-y-4"></div>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium t-hi border-b brd pb-2">선호 포지션(TOP/JG/BOT) 배치 비율</h3>
+                <div id="summary-pos-graph-container" class="mt-4 space-y-4"></div>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium t-hi border-b brd pb-2">평균 MVP 획득 확률</h3>
+                <div id="summary-mvp-graph-container" class="mt-4 space-y-4"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-empty" class="text-center py-12 t-faint">분석할 유저명을 선택하시면 상세 프로필 리포트가 완성됩니다.</div>
+        </div>
+
+        <div id="tab-input" class="hidden card p-6 rounded-2xl max-w-5xl mx-auto my-2">
+          <div class="seg-track mb-6">
+            <button id="toggle-input-photo" onclick="switchInputType('photo')" class="seg-btn sub-toggle-active">사진 등록 인식</button>
+            <button id="toggle-input-manual" onclick="switchInputType('manual')" class="seg-btn">수기 기록실</button>
+          </div>
+
+          <div id="input-manual-frame" class="space-y-4 hidden">
+            <div class="border-b brd pb-2">
+              <h3 class="text-xl font-medium t-hi">경기 전적 기록실 (수기)</h3>
+              <p class="text-xs t-faint mt-1">값을 직접 입력하여 단건으로 글로벌 시트에 실시간 누적합니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div class="flex flex-col gap-1"><label class="font-medium t-lo">시즌 설정</label><input type="text" id="in-season" placeholder="예: 시즌26" class="field"></div>
+              <div class="flex flex-col gap-1"><label class="font-medium t-lo">매치 경기 날짜</label><input type="date" id="in-date" class="field"></div>
+              <div class="flex flex-col gap-1"><label class="font-medium t-lo">매치 경기 시간</label><input type="time" id="in-time" class="field"></div>
+              <div class="flex flex-col gap-1">
+                <label class="font-medium t-lo">팀 승패 여부</label>
+                <select id="in-team" class="field font-medium t-brand">
+                  <option value="Win">팀 승리 (Win)</option>
+                  <option value="Lose">팀 패배 (Lose)</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="font-medium t-lo">플레이 포지션</label>
+                <select id="in-pos" class="field font-medium">
+                  <option value="TOP">TOP (탑)</option>
+                  <option value="JG">JG (정글)</option>
+                  <option value="BOT">BOT (바텀)</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-1"><label class="font-medium t-lo">플레이어 유저명</label><input type="text" id="in-name" placeholder="유저 닉네임 입력" class="field"></div>
+              <div class="flex flex-col gap-1 sm:col-span-2"><label class="font-medium t-lo">선택 캐릭터명</label><input type="text" id="in-hero" placeholder="선택한 영웅 이름 입력" class="field"></div>
+
+              <div class="flex flex-col gap-1 sm:col-span-2 p-3 rounded-xl" style="background:var(--panel-2); border:1px solid var(--line);">
+                <label class="font-medium t-hi mb-1">인게임 세부 전적 스코어 (K / D / A)</label>
+                <div class="flex gap-2">
+                  <div class="w-1/3"><input type="number" id="in-k" min="0" placeholder="Kill" class="field text-center font-medium t-str"></div>
+                  <div class="w-1/3"><input type="number" id="in-d" min="0" placeholder="Death" class="field text-center font-medium t-hi"></div>
+                  <div class="w-1/3"><input type="number" id="in-a" min="0" placeholder="Assist" class="field text-center font-medium t-int"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1 sm:col-span-2">
+                <label class="font-medium t-lo">인게임 MVP 여부</label>
+                <select id="in-mvp" class="field font-medium t-lo">
+                  <option value="0">일반 플레이어 (0)</option>
+                  <option value="1">MVP 플레이어 (1)</option>
+                </select>
+              </div>
+            </div>
+            <div class="pt-2">
+              <button id="submit-btn" onclick="submitRecord()" class="btn-primary w-full p-3.5 rounded-xl text-base">전적 전송 및 통계 반영</button>
+            </div>
+          </div>
+
+          <div id="input-photo-frame" class="space-y-6">
+            <div class="border-b brd pb-2">
+              <h3 class="text-xl font-medium t-hi">스마트 사진 전적 인식기</h3>
+              <p class="text-xs t-faint mt-1">게임 결과 스크린샷을 업로드하면 AI가 글로벌 10인의 닉네임, 캐릭터, KDA를 자동 감지합니다.</p>
+            </div>
+
+            <div class="dropzone flex flex-col items-center justify-center rounded-2xl p-6 relative cursor-pointer">
+              <input type="file" id="photo-file-input" accept="image/*, .tga" onchange="handlePhotoUpload(this)" class="absolute inset-0 opacity-0 cursor-pointer">
+              <div id="upload-status-text" class="text-center text-sm font-semibold t-hi">
+                클릭하거나 이곳에 전적 스크린샷 파일을 드롭하세요
+                <p class="text-xs t-faint mt-1">PNG, JPG, TGA 파일 지원</p>
+              </div>
+            </div>
+
+            <div id="photo-result-board" class="hidden space-y-4">
+              <div class="flex justify-between items-center p-3 rounded-lg" style="background:var(--panel-2); border:1px solid var(--line);">
+                <span class="text-xs font-medium t-lo">추출 오류나 미인식 항목이 있다면 아래 표에서 직접 수정한 뒤 저장하세요.</span>
+                <span class="text-xs font-medium t-gold px-2 py-1 rounded" style="background:var(--panel);">감지 완료</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl mb-4" style="background:var(--panel-2); border:1px solid var(--line);">
+                <div class="flex flex-col gap-1">
+                  <label class="font-medium t-lo text-sm">시즌 설정 (과거 스샷용)</label>
+                  <input type="text" id="photo-season" class="field text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="font-medium t-lo text-sm">매치 경기 날짜</label>
+                  <input type="date" id="photo-date" class="field text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="font-medium t-lo text-sm">매치 경기 시간</label>
+                  <input type="time" id="photo-time" class="field text-sm">
+                </div>
+              </div>
+
+              <div class="overflow-x-auto card rounded-xl">
+                <table class="w-full text-center border-collapse text-sm">
+                  <thead>
+                    <tr>
+                      <th class="p-2">번호</th><th>팀승패</th><th>포지션</th><th>유저 닉네임</th><th>캐릭터명</th><th>K</th><th>D</th><th>A</th><th>MVP</th>
+                    </tr>
+                  </thead>
+                  <tbody id="photo-players-tbody"></tbody>
+                </table>
+              </div>
+
+              <button id="photo-submit-btn" onclick="submitBulkRecords()" class="btn-primary w-full p-4 rounded-xl text-base">
+                검증된 글로벌 10인 전적 일괄 등록하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="pw-modal-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="pw-modal-box" class="card rounded-2xl p-6 w-full max-w-xs text-center space-y-4">
+      <div>
+        <h3 class="text-lg font-medium t-hi">기록실 비밀번호</h3>
+        <p class="text-xs t-faint mt-1">전적 기록하기 탭에 들어가려면<br>비밀번호를 입력해주세요.</p>
+      </div>
+      <input type="password" id="pw-modal-input" class="field text-center" placeholder="••••" autocomplete="off">
+      <p id="pw-modal-error" class="text-xs t-lose hidden">비밀번호가 올바르지 않습니다.</p>
+      <div class="flex gap-2 pt-1">
+        <button onclick="cancelPwModal()" class="btn-outline flex-1 py-2.5 rounded-lg text-sm">취소</button>
+        <button onclick="confirmPwModal()" class="btn-primary flex-1 py-2.5 rounded-lg text-sm">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 💡 글로벌 시트이므로 TARGET_USERS 필터링을 사용하지 않습니다.
+    const TARGET_USERS = [];
+
+    // ============================================================
+    // 🌐 독립 홈페이지용 백엔드 연결 설정
+    // ============================================================
+    // 이 사이트는 Apps Script 위에서 돌아가지 않는 "독립 홈페이지"이기 때문에,
+    // Apps Script 전용 API인 google.script.run을 쓸 수 없습니다. 대신 아래 API_BASE_URL에
+    // 적어둔 Apps Script 웹앱 주소로 fetch() 요청을 보내는 방식으로 동일하게 동작하도록
+    // google.script.run과 똑같이 생긴 가짜(shim) 객체를 만들어 씁니다.
+    // (아래 코드 자체는 건드릴 필요 없고, API_BASE_URL 딱 한 줄만 채우면 됩니다)
+    //
+    // API_BASE_URL 구하는 방법:
+    //   1. Apps Script 편집기에서 Code.gs가 배포된 프로젝트를 엽니다.
+    //   2. 우측 상단 "배포하기(Deploy)" → "웹 앱으로 배포(New deployment)" 클릭
+    //      (이미 배포되어 있다면 "배포 관리"에서 기존 배포를 "새 버전"으로 업데이트해도 됩니다.
+    //       단, 새 버전으로 업데이트하면 주소가 바뀌지 않고 유지됩니다.)
+    //   3. "액세스 권한(Who has access)"을 반드시 "모든 사용자(Anyone)"로 설정합니다.
+    //      ("Anyone with Google account"가 아니라 "Anyone"이어야 합니다 — 그래야 로그인 없이도
+    //       외부 사이트에서 fetch()로 접근할 수 있습니다.)
+    //   4. 배포 후 나오는 웹앱 URL(.../exec 로 끝남)을 복사해서 아래에 붙여넣습니다.
+    const API_BASE_URL = "여기에_Apps_Script_웹앱_URL을_붙여넣으세요"; // 예: "https://script.google.com/macros/s/AKfycb.../exec"
+
+    function callBackend(action, payload) {
+      return fetch(API_BASE_URL, {
+        method: 'POST',
+        // ⚠️ Content-Type을 application/json으로 보내면 브라우저가 먼저 CORS 사전 요청(preflight,
+        // OPTIONS 메서드)을 보내는데, Apps Script 웹앱은 이 사전 요청에 응답하지 못해 항상 실패합니다.
+        // text/plain으로 보내면 사전 요청 없이 바로 전송되고, 서버(doPost)에서 직접 JSON으로
+        // 파싱하므로 결과적으로 동일하게 동작합니다.
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, payload: payload || {} })
+      })
+        .then(function(res) {
+          if (!res.ok) throw new Error('서버 응답 오류 (HTTP ' + res.status + ')');
+          return res.json();
+        });
+    }
+
+    if (typeof google === 'undefined') {
+      window.google = {
+        script: {
+          run: (function() {
+            function makeRunner(successCb, failureCb) {
+              function handle(promise) {
+                promise.then(function(data) {
+                  if (successCb) successCb(data);
+                }).catch(function(err) {
+                  console.error(err);
+                  if (failureCb) failureCb(err);
+                  else alert("서버와 통신 중 오류가 발생했습니다: " + (err && err.message ? err.message : err) + "\n\n(API_BASE_URL 설정이 올바른지, Apps Script 웹앱이 '모든 사용자' 권한으로 배포되어 있는지 확인해주세요)");
+                });
+              }
+              var runner = {
+                withFailureHandler: function(cb) { failureCb = cb; return runner; },
+                getDashboardData: function(y) { handle(callBackend('getDashboardData', { year: y })); },
+                addRecord: function(d) { handle(callBackend('addRecord', d)); },
+                uploadAndAnalyzeImage: function(b) { handle(callBackend('uploadAndAnalyzeImage', { base64Data: b })); },
+                saveHofImage: function(b, u) { handle(callBackend('saveHofImage', { base64Data: b, uploaderName: u })); },
+                getHofImages: function() { handle(callBackend('getHofImages', {})); }
+              };
+              return runner;
+            }
+            return {
+              withSuccessHandler: function(callback) { return makeRunner(callback, null); }
+            };
+          })()
+        }
+      };
+    }
+
+    let currentTab = 'tab-players';
+    let currentSynergyType = 'hero';
+    let currentNemesisType = 'hero';
+    let globalProfiles = {};
+    let cacheData = {};
+    let isInputUnlocked = false;
+    let pendingTabId = null;
+
+    const ALL_TAB_IDS = ['tab-players', 'tab-heroes', 'tab-focus', 'tab-kda', 'tab-synergy', 'tab-nemesis', 'tab-recent', 'tab-input', 'tab-hof'];
+    const ALL_BTN_IDS = ['btn-players', 'btn-heroes', 'btn-focus', 'btn-kda', 'btn-synergy', 'btn-nemesis', 'btn-recent', 'btn-input', 'btn-hof'];
+
+    function getAttrBadge(attr) {
+      if(!attr) return '';
+      return `<span class="attr-${attr}">${attr}</span>`;
+    }
+
+    // 평균/개별 K/D/A를 K(빨강)/D(기본색)/A(파랑)로 색상 구분해서 표시 (가독성 개선)
+    function kdaColored(k, d, a) {
+      return `<span class="t-str font-medium">${k}</span><span class="t-faint">/</span><span class="t-hi font-medium">${d}</span><span class="t-faint">/</span><span class="t-int font-medium">${a}</span>`;
+    }
+
+    // 🏆 "최근 매치 기록" 예상 승률 계산 (표준화 z-score + 로지스틱 방식)
+    //
+    // 예전 방식(0~1로 눌러 담은 값끼리 A/(A+B) 비율 계산)은 평균을 두 번(지표 4개 → 유저,
+    // 유저 5명 → 팀) 거치면서 결과가 거의 항상 50%대로 쏠리는 문제가 있었습니다.
+    // 그래서 각 지표를 "전체 유저 평균 대비 얼마나 벗어나 있는지(표준편차 기준 z-score)"로 바꾸고,
+    // 두 팀의 점수 차이를 로지스틱 곡선에 넣어 승률로 변환하는 방식으로 바꿨습니다.
+    // (체스 Elo, 게임 매치메이킹 승률표시에서 흔히 쓰는 방식과 같은 원리)
+    // 이러면 평범한 매치는 여전히 50%대로 나오되, 실력 격차가 큰 매치는 z-score 자체가 훨씬
+    // 크게 벌어지기 때문에 30:70, 20:80처럼 확실하게 갈라집니다.
+
+    let popStats = null; // 시즌 필터가 바뀔 때마다 render()에서 다시 계산되도록 매번 초기화합니다.
+
+    // 라인 표기 순서(탑 → 정글 → 봇). 선수 목록 정렬과 최근 전적 리포트 양쪽에서 공용으로 씁니다.
+    const POS_ORDER = { 'TOP': 1, 'JG': 2, 'BOT': 3 };
+
+    // 유저별 원본 지표(승률/KDA/MVP율/메인픽 승률) 4개를 뽑아내는 공통 로직
+    function getRawPlayerMetrics(name) {
+      const prof = (cacheData.userProfiles || {})[name];
+      const totalRow = (cacheData.players || []).find(p => p.name === name && p.position === 'TOTAL');
+
+      const result = { winRate: null, kda: null, mvpRate: null, mainPickRate: null };
+      if (prof && prof.totalGames > 0) {
+        result.winRate = prof.totalWins / prof.totalGames;
+        result.mvpRate = prof.totalMvp / prof.totalGames;
+      }
+      if (totalRow) {
+        result.kda = parseFloat(totalRow.kda) || 0;
+      }
+      // 예상 승률 계산용 메인 픽 승률은 화면 표시용 mostList(연도 필터에 따라 최소 판수가 7판/3판으로
+      // 달라짐)가 아니라, 항상 같은 고정 기준으로 만들어지는 mainPickPool을 사용합니다.
+      // 그래야 "전체 누적"과 "시즌"에서 같은 원본 데이터라면 이 지표가 흔들리지 않습니다.
+      if (prof && prof.mainPickPool && prof.mainPickPool.length > 0) {
+        const mainPick = [...prof.mainPickPool].sort((a, b) => b.games - a.games)[0];
+        result.mainPickRate = mainPick.winRateNum / 100;
+      } else if (result.winRate !== null) {
+        result.mainPickRate = result.winRate; // 메인 픽 데이터가 없으면 전체 승률로 대체
+      }
+      return result;
+    }
+
+    // 전체 유저 풀을 훑어서 4개 지표 각각의 평균/표준편차를 구합니다 (z-score 계산의 기준선).
+    function computePopulationStats() {
+      const profiles = cacheData.userProfiles || {};
+      const buckets = { winRate: [], kda: [], mvpRate: [], mainPickRate: [] };
+
+      Object.keys(profiles).forEach(name => {
+        const m = getRawPlayerMetrics(name);
+        if (m.winRate !== null) buckets.winRate.push(m.winRate);
+        if (m.kda !== null) buckets.kda.push(m.kda);
+        if (m.mvpRate !== null) buckets.mvpRate.push(m.mvpRate);
+        if (m.mainPickRate !== null) buckets.mainPickRate.push(m.mainPickRate);
+      });
+
+      function meanStd(arr) {
+        if (arr.length === 0) return { mean: 0, std: 1 };
+        const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length;
+        const std = Math.sqrt(variance);
+        return { mean: mean, std: std > 0.0001 ? std : 1 }; // 표준편차 0으로 나누기 방지
+      }
+
+      return {
+        winRate: meanStd(buckets.winRate),
+        kda: meanStd(buckets.kda),
+        mvpRate: meanStd(buckets.mvpRate),
+        mainPickRate: meanStd(buckets.mainPickRate)
+      };
+    }
+
+    function zScore(value, stat) {
+      return (value - stat.mean) / stat.std;
+    }
+
+    // 유저 한 명의 "실력 점수"를 4개 지표의 z-score 평균으로 계산합니다.
+    // 데이터가 없는 지표는 z=0(리그 평균)으로 취급해 중립적으로 처리합니다.
+    function getPlayerRating(name) {
+      if (!popStats) popStats = computePopulationStats();
+      const m = getRawPlayerMetrics(name);
+
+      const zWin = m.winRate !== null ? zScore(m.winRate, popStats.winRate) : 0;
+      const zKda = m.kda !== null ? zScore(m.kda, popStats.kda) : 0;
+      const zMvp = m.mvpRate !== null ? zScore(m.mvpRate, popStats.mvpRate) : 0;
+      const zMain = m.mainPickRate !== null ? zScore(m.mainPickRate, popStats.mainPickRate) : 0;
+
+      return (zWin + zKda + zMvp + zMain) / 4;
+    }
+
+    function getTeamRating(teamRecords) {
+      if (!teamRecords || teamRecords.length === 0) return 0;
+      let sum = 0;
+      teamRecords.forEach(p => sum += getPlayerRating(p.name));
+      return sum / teamRecords.length;
+    }
+
+    // 두 팀의 실력 점수 차이를 로지스틱 곡선에 넣어 승률(%)로 변환합니다.
+    // LOGISTIC_SENSITIVITY를 키우면 같은 격차에도 승률 차이가 더 크게 벌어집니다.
+    const LOGISTIC_SENSITIVITY = 0.9;
+    function ratingsToWinPct(ratingA, ratingB) {
+      const diff = ratingA - ratingB;
+      let pct = 100 / (1 + Math.exp(-diff * LOGISTIC_SENSITIVITY));
+      pct = Math.max(5, Math.min(95, pct)); // 표본이 적은 상황에서 0%/100%처럼 과신하는 걸 방지
+      return Math.round(pct);
+    }
+
+    // 비밀번호 확인이 필요한 탭은 먼저 중앙 모달을 띄우고, 통과하면 실제 탭 전환을 수행합니다.
+    function switchTab(id) {
+      if (id === 'tab-input' && !isInputUnlocked) {
+        pendingTabId = id;
+        const input = document.getElementById('pw-modal-input');
+        input.value = '';
+        document.getElementById('pw-modal-error').classList.add('hidden');
+        document.getElementById('pw-modal-overlay').classList.remove('hidden');
+        setTimeout(() => input.focus(), 50);
+        return;
+      }
+      actuallySwitchTab(id);
+    }
+
+    function confirmPwModal() {
+      const val = document.getElementById('pw-modal-input').value;
+      if (val === "1004") {
+        isInputUnlocked = true;
+        document.getElementById('pw-modal-overlay').classList.add('hidden');
+        if (pendingTabId) { actuallySwitchTab(pendingTabId); pendingTabId = null; }
+      } else {
+        document.getElementById('pw-modal-error').classList.remove('hidden');
+      }
+    }
+
+    function cancelPwModal() {
+      document.getElementById('pw-modal-overlay').classList.add('hidden');
+      pendingTabId = null;
+    }
+
+    function actuallySwitchTab(id) {
+      ALL_TAB_IDS.forEach(t => document.getElementById(t).classList.add('hidden'));
+      ALL_BTN_IDS.forEach(b => document.getElementById(b).classList.remove('tab-active'));
+
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById('btn-' + id.split('-')[1]).classList.add('tab-active');
+      currentTab = id;
+
+      if (id === 'tab-hof') loadHofImages();
+    }
+
+    function uploadHofImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const uploader = prompt("올리시는 분의 닉네임을 입력해주세요 (또는 사진 제목):", "익명");
+      if (!uploader) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let img = new Image();
+        img.onload = function() {
+          let canvas = document.createElement('canvas');
+          let scale = Math.min(800 / img.width, 800 / img.height, 1);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          let ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          let base64Data = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('hof-gallery').innerHTML = `<div class="col-span-full text-center py-10 t-gold font-medium animate-pulse">사진을 업로드 중입니다...</div>`;
+
+          google.script.run.withSuccessHandler(function(res) {
+            alert(res);
+            loadHofImages();
+          }).saveHofImage(base64Data, uploader);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadHofImages() {
+      document.getElementById('hof-gallery').innerHTML = `<div class="col-span-full text-center py-10 t-lo">명예의 전당 갤러리를 불러오는 중입니다...</div>`;
+      google.script.run.withSuccessHandler(function(data) {
+        const gallery = document.getElementById('hof-gallery');
+        gallery.innerHTML = '';
+        if(data.length === 0) {
+          gallery.innerHTML = `<div class="col-span-full text-center py-12 t-faint">아직 등록된 사진이 없습니다. 첫 번째 사진을 올려보세요!</div>`;
+          return;
+        }
+        data.forEach(item => {
+          gallery.innerHTML += `
+            <div class="card rounded-xl overflow-hidden hof-card">
+              <img src="${item.img}" class="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition" onclick="window.open('${item.img}', '_blank')">
+              <div class="p-3 flex justify-between items-center text-xs" style="background:var(--panel-2);">
+                <span class="font-medium t-hi">${item.name}</span>
+                <span class="t-faint font-medium">${item.date}</span>
+              </div>
+            </div>`;
+        });
+      }).getHofImages();
+    }
+
+    function switchSynergyType(type) {
+      currentSynergyType = type;
+      ['toggle-syn-hero', 'toggle-syn-user', 'toggle-syn-attr'].forEach(btn => {
+        document.getElementById(btn).className = 'seg-btn';
+      });
+      document.getElementById('toggle-syn-' + type).className = 'seg-btn sub-toggle-active';
+
+      if (type === 'attr') {
+        document.getElementById('synergy-grid-frame').classList.add('hidden');
+        document.getElementById('synergy-attr-frame').classList.remove('hidden');
+      } else {
+        document.getElementById('synergy-grid-frame').classList.remove('hidden');
+        document.getElementById('synergy-attr-frame').classList.add('hidden');
+      }
+      renderSynergyTables();
+    }
+
+    function switchNemesisType(type) {
+      currentNemesisType = type;
+      ['toggle-nem-hero', 'toggle-nem-user'].forEach(btn => {
+        document.getElementById(btn).className = 'seg-btn';
+      });
+      document.getElementById('toggle-nem-' + type).className = 'seg-btn sub-toggle-active';
+      renderNemesisTables();
+    }
+
+    window.onload = function() {
+      const today = new Date();
+      const dateStr = today.toISOString().substring(0, 10);
+      const timeStr = today.toTimeString().substring(0, 5);
+      const shortYear = today.getFullYear().toString().substring(2);
+      const seasonStr = "시즌" + shortYear;
+
+      document.getElementById('in-date').value = dateStr;
+      document.getElementById('in-time').value = timeStr;
+      document.getElementById('in-season').value = seasonStr;
+
+      document.getElementById('photo-date').value = dateStr;
+      document.getElementById('photo-time').value = timeStr;
+      document.getElementById('photo-season').value = seasonStr;
+
+      document.getElementById('pw-modal-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') confirmPwModal();
+      });
+
+      loadData();
+    };
+
+    function loadData() {
+      document.getElementById('loading').classList.remove('hidden');
+      const year = document.getElementById('year-select').value;
+      google.script.run.withSuccessHandler(render).getDashboardData(year);
+    }
+
+    function render(data) {
+      cacheData = data;
+      popStats = null; // 새 데이터(시즌 필터 변경 등)가 들어올 때마다 승률 계산용 평균/표준편차를 다시 구합니다.
+      document.getElementById('loading').classList.add('hidden');
+      actuallySwitchTab(currentTab);
+
+      if(data.error) { alert("통계 연산 에러: " + data.error); return; }
+
+      globalProfiles = data.userProfiles || {};
+      const selectBox = document.getElementById('user-profile-select');
+      const prevSelected = selectBox.value;
+
+      selectBox.options.length = 0;
+      selectBox.options[0] = new Option('-- 글로벌 유저명을 선택하세요 --', '');
+
+      // 돋보기 대상 유저는 "메인 픽 목록(mostList)"이 아니라 통산 판수(totalGames) 기준으로 뽑습니다.
+      // mostList는 캐릭터별 최소 판수 기준을 넘긴 캐릭터만 들어있어서, 그 기준으로 유저 자체를
+      // 걸러버리면 1판만 뛴 유저는 주속성/포지션 통계가 있어도 돋보기에서 아예 선택할 수 없었습니다.
+      let sortedUsers = Object.keys(globalProfiles).sort();
+      for(let i=0; i<sortedUsers.length; i++) {
+        let uName = sortedUsers[i];
+        if (!globalProfiles[uName].totalGames) continue;
+        selectBox.options[selectBox.options.length] = new Option(uName, uName);
+      }
+
+      if(prevSelected && globalProfiles[prevSelected] && globalProfiles[prevSelected].totalGames) {
+        selectBox.value = prevSelected; renderUserProfile();
+      } else {
+        document.getElementById('profile-content').classList.add('hidden');
+        document.getElementById('profile-summary-content').classList.add('hidden');
+        document.getElementById('profile-empty').classList.remove('hidden');
+      }
+
+      const pBody = document.getElementById('player-body'); pBody.innerHTML = '';
+      const users = {};
+      data.players.forEach(p => {
+        if(!users[p.name]) users[p.name] = { total: null, lines: [] };
+        if(p.position === 'TOTAL') users[p.name].total = p; else users[p.name].lines.push(p);
+      });
+
+      for(const name in users) {
+        const u = users[name];
+        if(!u.total || (document.getElementById('year-select').value === 'all' && u.total.games < 3)) continue;
+
+        u.lines.sort((a, b) => (POS_ORDER[a.position] || 99) - (POS_ORDER[b.position] || 99));
+
+        const tr = document.createElement('tr'); tr.className = 'accordion-toggle font-medium border-b brd';
+        tr.onclick = () => { document.querySelectorAll('.sub-'+name).forEach(s => s.style.display = s.style.display === 'table-row' ? 'none' : 'table-row'); };
+        tr.innerHTML = `<td class="p-4 text-left t-hi font-medium">▶ ${u.total.name}</td><td><span class="text-xs px-2 py-0.5 badge-total rounded-full">TOTAL</span></td><td class="t-lo">${u.total.games}</td><td class="t-lo">${u.total.wins}</td><td class="t-lo">${u.total.losses}</td><td class="win-text">${u.total.winRate}</td><td class="t-brand num text-lg">${u.total.kda}</td><td class="num text-xs">${kdaColored(u.total.avgK, u.total.avgD, u.total.avgA)}</td><td class="t-gold font-medium">${u.total.mvp}회</td>`;
+        pBody.appendChild(tr);
+        u.lines.forEach(l => {
+          const sTr = document.createElement('tr'); sTr.className = 'sub-row sub-'+name;
+          sTr.innerHTML = `<td class="p-2 t-faint text-left pl-10">└ 상세 라인</td><td>${l.position}</td><td>${l.games}</td><td>${l.wins}</td><td>${l.losses}</td><td>${l.winRate}</td><td>${l.kda}</td><td class="num">${kdaColored(l.avgK, l.avgD, l.avgA)}</td><td>${l.mvp}회</td>`;
+          pBody.appendChild(sTr);
+        });
+      }
+
+      const hBody = document.getElementById('hero-body'); hBody.innerHTML = '';
+      const heroHeaderTh = document.querySelector('#tab-heroes th:first-child');
+
+      heroHeaderTh.innerText = '순위';
+
+      data.heroes.forEach((h, index) => {
+        const tr = document.createElement('tr');
+
+        let tierOrRankHtml = `<span class="t-lo font-medium">${index + 1}위</span>`;
+
+        let themeColorClass = document.getElementById('loading').classList.contains('text-rose-500') ? 't-lose num' : 't-brand num';
+
+        tr.innerHTML = `<td class="p-4">${tierOrRankHtml}</td><td class="font-medium t-hi">${h.name}${getAttrBadge(h.attribute)}</td><td class="t-lo">${h.games}전</td><td class="t-lo">${h.wins}</td><td class="t-lo">${h.losses}</td><td class="win-text">${h.winRate}</td><td class="font-semibold ${themeColorClass}">${h.kda}</td><td class="num text-xs">${kdaColored(h.avgK, h.avgD, h.avgA)}</td><td class="font-semibold ${themeColorClass}">${h.mvp}회</td>`;
+        hBody.appendChild(tr);
+      });
+
+      const bBody = document.getElementById('kda-best-body'); bBody.innerHTML = '';
+      data.kdaStats.best.forEach((p, i) => {
+        let rankStyle = i < 3 ? 't-gold num font-medium' : 't-faint';
+        bBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rankStyle}">${i+1}</td><td class="font-medium t-hi">${p.name}</td><td class="t-hi font-medium">${p.hero}${getAttrBadge(p.attribute)}</td><td class="t-lo font-medium">${p.kdaString}</td><td class="t-brand num font-medium">${p.kda}</td></tr>`;
+      });
+      const wBody = document.getElementById('kda-worst-body'); wBody.innerHTML = '';
+      data.kdaStats.worst.forEach((p, i) => {
+        let rankStyle = i < 3 ? 't-lose num font-medium' : 't-faint';
+        wBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rankStyle}">${i+1}</td><td class="font-medium t-hi">${p.name}</td><td class="t-hi font-medium">${p.hero}${getAttrBadge(p.attribute)}</td><td class="t-lo font-medium">${p.kdaString}</td><td class="t-lose num font-medium">${p.kda}</td></tr>`;
+      });
+
+      renderRecentMatches();
+      renderSynergyTables();
+      renderNemesisTables();
+    }
+
+    // 최근 전적 상세 리포트: 몇 "판"까지 볼지 선택하는 박스 (기본 10판, 최대 50판)
+    let recentMatchLimit = 10;
+
+    function setRecentMatchLimit(n) {
+      recentMatchLimit = n;
+      ['toggle-recent-10', 'toggle-recent-50'].forEach(id => document.getElementById(id).className = 'seg-btn');
+      document.getElementById('toggle-recent-' + n).className = 'seg-btn sub-toggle-active';
+      renderRecentMatches();
+    }
+
+    function renderRecentMatches() {
+      const recContainer = document.getElementById('recent-matches-container');
+      if (!recContainer) return;
+      recContainer.innerHTML = '';
+
+      const recentRecords = cacheData.recentRecords || [];
+
+      if (recentRecords.length > 0) {
+        let matches = [];
+        let currentMatch = null;
+        let currentKey = '';
+
+        recentRecords.forEach(r => {
+           let key = r.date + '_' + r.time;
+           if(key !== currentKey) {
+               currentKey = key;
+               currentMatch = { date: r.date, time: r.time, winners: [], losers: [] };
+               matches.push(currentMatch);
+           }
+           if(r.win) currentMatch.winners.push(r);
+           else currentMatch.losers.push(r);
+        });
+
+        // 최신 매치부터 순서대로 쌓이므로, 선택한 판수(10판/50판)만큼만 잘라서 보여줍니다.
+        matches = matches.slice(0, recentMatchLimit);
+
+        // 라인(탑/정글/봇)별 예상 승률을 구합니다. 팀 전체 예상 승률과 같은 방식(레이팅 → 로지스틱)을
+        // 그 라인에 배치된 선수(들)만 떼어서 적용합니다. 탑/정글은 1명 vs 1명, 봇은 3명 평균 vs 3명 평균입니다.
+        function computeLanePct(winners, losers) {
+            const result = {};
+            ['TOP', 'JG', 'BOT'].forEach(pos => {
+                const wSide = winners.filter(p => p.pos === pos);
+                const lSide = losers.filter(p => p.pos === pos);
+                if (wSide.length === 0 || lSide.length === 0) return; // 한쪽에 데이터가 없으면 비교 불가
+                const winPct = ratingsToWinPct(getTeamRating(wSide), getTeamRating(lSide));
+                result[pos] = { winPct: winPct, losePct: 100 - winPct };
+            });
+            return result;
+        }
+
+        function makePlayerRow(p, isWin, lanePct) {
+            let mvpHtml = p.mvp ? `<span class="mvp-chip">MVP</span>` : '';
+            // 라인 예상 승률: 숫자만 덜렁 있으면 무엇을 뜻하는지 알기 어려우니
+            // ▲(유리)/▼(불리)/–(백중세) 기호 + 배경색이 있는 별도 배지로, KDA와는 분리된 오른쪽 칸에 둡니다.
+            let pctHtml = '<span class="lane-pct-chip lane-pct-neutral">-</span>';
+            const laneInfo = lanePct ? lanePct[p.pos] : null;
+            if (laneInfo) {
+              const myPct = isWin ? laneInfo.winPct : laneInfo.losePct;
+              const oppPct = isWin ? laneInfo.losePct : laneInfo.winPct;
+              if (myPct > oppPct) {
+                pctHtml = `<span class="lane-pct-chip lane-pct-fav" title="이 라인은 ${myPct}%로 유리하게 예상돼요">▲ ${myPct}%</span>`;
+              } else if (myPct < oppPct) {
+                pctHtml = `<span class="lane-pct-chip lane-pct-unfav" title="이 라인은 ${myPct}%로 불리하게 예상돼요">▼ ${myPct}%</span>`;
+              } else {
+                pctHtml = `<span class="lane-pct-chip lane-pct-neutral" title="이 라인은 ${myPct}%로 백중세예요">– ${myPct}%</span>`;
+              }
+            }
+            return `
+            <div class="flex items-center justify-between text-sm py-1.5 px-2 hover-row rounded transition border-b brd last:border-0">
+               <div class="flex items-baseline gap-1.5 w-1/2 overflow-hidden">
+                 <span class="font-medium t-hi truncate text-xs md:text-sm" title="${p.name}">${p.name}</span>
+                 <span class="text-[10px] t-faint font-medium" title="${p.pos}">${p.pos}</span>
+                 <span class="text-[10px] t-lo truncate" title="${p.hero}">${p.hero}</span>
+                 ${mvpHtml}
+               </div>
+               <div class="flex items-center justify-end gap-2 w-1/2">
+                 <div class="flex flex-col items-end">
+                   <span class="font-medium t-hi num tracking-wide text-xs">${p.k} / ${p.d} / ${p.a}</span>
+                   <span class="text-[10px] font-medium num ${isWin ? 't-brand' : 't-lose'}">KDA ${p.kda}</span>
+                 </div>
+                 ${pctHtml}
+               </div>
+            </div>`;
+        }
+
+        matches.forEach(m => {
+            // 팀 내 표시 순서를 탑 → 정글 → 봇 순으로 정렬합니다.
+            m.winners.sort((a, b) => (POS_ORDER[a.pos] || 99) - (POS_ORDER[b.pos] || 99));
+            m.losers.sort((a, b) => (POS_ORDER[a.pos] || 99) - (POS_ORDER[b.pos] || 99));
+
+            const lanePct = computeLanePct(m.winners, m.losers);
+            let wHtml = m.winners.map(p => makePlayerRow(p, true, lanePct)).join('');
+            let lHtml = m.losers.map(p => makePlayerRow(p, false, lanePct)).join('');
+
+            // 승리팀/패배팀의 사전 예상 승률(z-score 격차를 로지스틱 곡선에 넣어 계산)을 구합니다.
+            // 실제 결과와 비교해서, 예상 승률이 더 낮았던 팀이 이겼다면 "업셋"으로 표시합니다.
+            const winRating = getTeamRating(m.winners);
+            const loseRating = getTeamRating(m.losers);
+            const winTeamPct = ratingsToWinPct(winRating, loseRating);
+            const loseTeamPct = 100 - winTeamPct;
+            const isUpset = loseTeamPct > winTeamPct;
+
+            recContainer.innerHTML += `
+            <div class="card rounded-xl overflow-hidden">
+               <div class="match-head px-4 py-2 text-sm font-medium border-b brd flex justify-between items-center">
+                 <span>${m.date} &nbsp; ${m.time}${isUpset ? '<span class="upset-badge">업셋</span>' : ''}</span>
+                 <span class="text-xs font-medium t-faint">Global Match</span>
+               </div>
+               <div class="flex flex-col md:flex-row">
+                  <div class="w-full md:w-1/2 team-win-panel p-4">
+                     <div class="t-brand font-medium mb-3 flex items-center justify-between border-b brd pb-2">
+                       <span>승리 (WIN) 팀</span>
+                       <span class="win-pct-chip" style="background:rgba(232,98,143,.12); color:var(--brand);">예상 승률 ${winTeamPct}%</span>
+                     </div>
+                     <div class="space-y-1">${wHtml}</div>
+                  </div>
+                  <div class="w-full md:w-1/2 team-lose-panel p-4 border-t md:border-t-0 md:border-l brd">
+                     <div class="t-lose font-medium mb-3 flex items-center justify-between border-b brd pb-2">
+                       <span>패배 (LOSE) 팀</span>
+                       <span class="win-pct-chip" style="background:rgba(242,130,140,.12); color:var(--lose);">예상 승률 ${loseTeamPct}%</span>
+                     </div>
+                     <div class="space-y-1">${lHtml}</div>
+                  </div>
+               </div>
+            </div>`;
+        });
+      } else {
+        recContainer.innerHTML = '<div class="p-8 text-center t-faint font-medium border border-dashed brd rounded-xl">기록된 전적이 없습니다.</div>';
+      }
+    }
+
+    function renderSynergyTables() {
+      const bestBody = document.getElementById('synergy-best-body'); bestBody.innerHTML = '';
+      const worstBody = document.getElementById('synergy-worst-body'); worstBody.innerHTML = '';
+      const attrBody = document.getElementById('synergy-attr-body'); attrBody.innerHTML = '';
+
+      let targetStats = (currentSynergyType === 'hero') ? cacheData.synergyStats : cacheData.userSynergyStats;
+      let label = (currentSynergyType === 'hero') ? '캐릭터' : '유저';
+
+      document.getElementById('syn-best-title').innerText = `추천 꿀조합 ${label} 듀오 TOP 20`;
+      document.getElementById('syn-worst-title').innerText = `주의 필패조합 ${label} 듀오 TOP 20`;
+
+      if (currentSynergyType === 'attr') {
+        if (cacheData.attrSynergyStats && cacheData.attrSynergyStats.length > 0) {
+          cacheData.attrSynergyStats.forEach((s, i) => {
+            let rStyle = i < 3 ? 't-int num font-medium text-base' : 't-faint';
+            attrBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3.5 ${rStyle}">${i+1}</td><td class="font-medium t-hi text-sm">${getAttrBadge(s.attr1)} <span class="t-faint mx-2">x</span> ${getAttrBadge(s.attr2)}</td><td class="text-sm t-lo font-medium">${s.games}전 ${s.wins}승 ${s.losses}패</td><td class="t-int num font-medium text-lg">${s.winRate}</td></tr>`;
+          });
+        }
+        return;
+      }
+
+      if(targetStats && targetStats.best && targetStats.best.length > 0) {
+        targetStats.best.forEach((s, i) => {
+          let rStyle = i < 3 ? 't-win num font-medium' : 't-faint';
+          let highlightColor = (currentSynergyType === 'hero') ? 't-hi' : 't-hi font-medium';
+          let nameStr1 = (currentSynergyType === 'hero') ? `${s.name1}${getAttrBadge(s.attr1)}` : s.name1;
+          let nameStr2 = (currentSynergyType === 'hero') ? `${s.name2}${getAttrBadge(s.attr2)}` : s.name2;
+          bestBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rStyle} font-medium">${i+1}</td><td class="font-medium ${highlightColor} text-sm">${nameStr1} <span class="t-faint mx-1">x</span> ${nameStr2}</td><td class="text-xs t-lo font-medium">${s.games}전 ${s.wins}승 ${s.losses}패</td><td class="t-win num font-medium text-base">${s.winRate}</td></tr>`;
+        });
+      }
+
+      if(targetStats && targetStats.worst && targetStats.worst.length > 0) {
+        targetStats.worst.forEach((s, i) => {
+          let rStyle = i < 3 ? 't-lose num font-medium' : 't-faint';
+          let highlightColor = (currentSynergyType === 'hero') ? 't-hi' : 't-hi font-medium';
+          let nameStr1 = (currentSynergyType === 'hero') ? `${s.name1}${getAttrBadge(s.attr1)}` : s.name1;
+          let nameStr2 = (currentSynergyType === 'hero') ? `${s.name2}${getAttrBadge(s.attr2)}` : s.name2;
+          worstBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rStyle} font-medium">${i+1}</td><td class="font-medium ${highlightColor} text-sm">${nameStr1} <span class="t-faint mx-1">x</span> ${nameStr2}</td><td class="text-xs t-lo font-medium">${s.games}전 ${s.wins}승 ${s.losses}패</td><td class="t-lose num font-medium text-base">${s.winRate}</td></tr>`;
+        });
+      }
+    }
+
+    function renderNemesisTables() {
+      const bestBody = document.getElementById('nemesis-best-body'); bestBody.innerHTML = '';
+      const worstBody = document.getElementById('nemesis-worst-body'); worstBody.innerHTML = '';
+
+      let targetStats = (currentNemesisType === 'hero') ? cacheData.heroNemesisStats : cacheData.userNemesisStats;
+      let label = (currentNemesisType === 'hero') ? '캐릭터' : '유저';
+
+      document.getElementById('nem-best-title').innerText = `압도 ${label} 매치업 TOP 20`;
+      document.getElementById('nem-worst-title').innerText = `천적 ${label} 매치업 TOP 20`;
+
+      function nameCell(s) {
+        let n1 = (currentNemesisType === 'hero') ? `${s.name1}${getAttrBadge(s.attr1)}` : s.name1;
+        let n2 = (currentNemesisType === 'hero') ? `${s.name2}${getAttrBadge(s.attr2)}` : s.name2;
+        return `${n1} <span class="t-faint mx-1">vs</span> ${n2}`;
+      }
+
+      if(targetStats && targetStats.best && targetStats.best.length > 0) {
+        targetStats.best.forEach((s, i) => {
+          let rStyle = i < 3 ? 't-win num font-medium' : 't-faint';
+          bestBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rStyle} font-medium">${i+1}</td><td class="font-medium t-hi text-sm">${nameCell(s)}</td><td class="text-xs t-lo font-medium">${s.games}전 ${s.wins}승 ${s.losses}패</td><td class="t-win num font-medium text-base">${s.winRate}</td></tr>`;
+        });
+      } else {
+        bestBody.innerHTML = `<tr><td colspan="4" class="p-8 t-faint text-center">표본이 부족합니다.</td></tr>`;
+      }
+
+      if(targetStats && targetStats.worst && targetStats.worst.length > 0) {
+        targetStats.worst.forEach((s, i) => {
+          let rStyle = i < 3 ? 't-lose num font-medium' : 't-faint';
+          worstBody.innerHTML += `<tr class="border-b brd hover-row transition"><td class="p-3 ${rStyle} font-medium">${i+1}</td><td class="font-medium t-hi text-sm">${nameCell(s)}</td><td class="text-xs t-lo font-medium">${s.games}전 ${s.wins}승 ${s.losses}패</td><td class="t-lose num font-medium text-base">${s.winRate}</td></tr>`;
+        });
+      } else {
+        worstBody.innerHTML = `<tr><td colspan="4" class="p-8 t-faint text-center">표본이 부족합니다.</td></tr>`;
+      }
+    }
+
+    function renderUserProfile() {
+      const uName = document.getElementById('user-profile-select').value;
+      const statType = document.getElementById('stat-type-select').value;
+      const selectText = document.getElementById('stat-type-select').options[document.getElementById('stat-type-select').selectedIndex].text;
+
+      if(!uName || !globalProfiles[uName]) {
+        document.getElementById('profile-content').classList.add('hidden');
+        document.getElementById('profile-summary-content').classList.add('hidden');
+        document.getElementById('profile-empty').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('profile-empty').classList.add('hidden');
+      const prof = globalProfiles[uName];
+      let baseList = JSON.parse(JSON.stringify(prof.mostList || []));
+
+      if (statType === 'summary') {
+        document.getElementById('profile-content').classList.add('hidden');
+        document.getElementById('profile-summary-content').classList.remove('hidden');
+        buildUserSummaryReport(uName, baseList, prof.positions, prof.totalMvp, prof.totalGames, prof.streak, prof.attrBreakdown);
+        return;
+      }
+
+      document.getElementById('profile-summary-content').classList.add('hidden');
+      document.getElementById('profile-content').classList.remove('hidden');
+      document.getElementById('focus-table-title').innerText = `${uName}님의 ${selectText} TOP 30`;
+
+      if (statType === 'most') {
+        baseList.sort((a, b) => b.games - a.games || b.winRateNum - a.winRateNum);
+      } else if (statType === 'bestWin') {
+        baseList.sort((a, b) => b.winRateNum - a.winRateNum || b.games - a.games);
+      } else if (statType === 'bestKda') {
+        baseList.sort((a, b) => b.kdaNum - a.kdaNum || b.games - a.games);
+      } else if (statType === 'worstWin') {
+        baseList.sort((a, b) => a.winRateNum - b.winRateNum || a.games - b.games);
+      } else if (statType === 'worstKda') {
+        baseList.sort((a, b) => a.kdaNum - b.kdaNum || a.games - b.games);
+      }
+
+      const tbody = document.getElementById('prof-most-table');
+      tbody.innerHTML = '';
+
+      let renderList = baseList.slice(0, 30);
+      if (renderList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 t-faint text-center">집계 전적이 부족합니다.</td></tr>`;
+        return;
+      }
+
+      renderList.forEach((m, idx) => {
+        tbody.innerHTML += `
+          <tr class="border-b brd hover-row transition">
+            <td class="p-2.5 font-medium t-faint">${idx + 1}</td>
+            <td class="font-medium t-hi">${m.heroName}${getAttrBadge(m.attribute)}</td>
+            <td class="font-medium t-lo">${m.games}전 <span class="text-xs t-faint">(${m.wins}승 ${m.losses}패)</span></td>
+            <td class="win-text">${m.winRate}</td>
+            <td class="t-brand num font-semibold">${m.kda}</td>
+          </tr>`;
+      });
+    }
+
+    function buildUserSummaryReport(uName, list, positionsData, totalMvp, totalGames, streakData, attrBreakdown) {
+      const cardsContainer = document.getElementById('summary-cards-container');
+      const graphContainer = document.getElementById('summary-attr-graph-container');
+      const posContainer = document.getElementById('summary-pos-graph-container');
+      const mvpContainer = document.getElementById('summary-mvp-graph-container');
+
+      cardsContainer.innerHTML = ''; graphContainer.innerHTML = ''; posContainer.innerHTML = ''; mvpContainer.innerHTML = '';
+
+      // 통산 판수가 아예 없는 유저만 완전히 빈 상태로 취급합니다.
+      // (캐릭터별 TOP3 카드는 "메인 픽 목록" 기준 최소 판수가 있어야 의미가 있지만,
+      //  주속성별 승률/선호 포지션은 그 기준과 무관하게 1판만 있어도 아래에서 그려줍니다)
+      if (!totalGames || totalGames === 0) {
+        cardsContainer.innerHTML = `<div class="text-center p-6 t-faint">데이터가 부족합니다.</div>`;
+        return;
+      }
+
+      if (list.length === 0) {
+        cardsContainer.innerHTML = `<div class="text-center p-6 t-faint">캐릭터별 최소 판수 기준을 충족하는 데이터가 아직 없습니다.</div>`;
+      } else {
+        const mostPlayedTop3 = [...list].sort((a,b)=>b.games - a.games).slice(0,3);
+        const bestWinTop3 = [...list].sort((a,b)=>b.winRateNum - a.winRateNum).slice(0,3);
+        const bestKdaTop3 = [...list].sort((a,b)=>b.kdaNum - a.kdaNum).slice(0,3);
+        const worstWinTop3 = [...list].sort((a,b)=>a.winRateNum - b.winRateNum).slice(0,3);
+
+        const categories = [
+          { title: '최다 플레이 캐릭터 TOP 3', data: mostPlayedTop3, type: 'games' },
+          { title: '최고 승률 캐릭터 TOP 3', data: bestWinTop3, type: 'winRate' },
+          { title: '최고 평균 KDA 캐릭터 TOP 3', data: bestKdaTop3, type: 'kda' },
+          { title: '최악 승률 캐릭터 TOP 3', data: worstWinTop3, type: 'winRate' }
+        ];
+
+        categories.forEach(cat => {
+          let itemsHtml = '';
+          cat.data.forEach((h, idx) => {
+            let valStr = cat.type==='games' ? `${h.games}전` : (cat.type==='winRate' ? `승률 ${h.winRate}` : `${h.kda} KDA`);
+            itemsHtml += `
+              <div class="summary-item">
+                <span class="font-medium t-hi text-sm">${idx+1}. ${h.heroName}${getAttrBadge(h.attribute)}</span>
+                <span class="summary-value-chip">${valStr}</span>
+              </div>`;
+          });
+          cardsContainer.innerHTML += `
+            <div class="summary-card">
+              <h4 class="cat-title">${cat.title}</h4>
+              <div class="space-y-1.5">${itemsHtml}</div>
+            </div>`;
+        });
+      }
+
+      // 주속성별 플레이 성향 및 승률: 캐릭터별 최소 판수 기준(mostList)이 아니라, 백엔드에서
+      // 별도로 집계해온 attrBreakdown(유저가 실제로 플레이한 모든 경기)을 그대로 사용합니다.
+      // 1판만 플레이한 캐릭터도 그 속성의 승률 계산에는 포함돼요.
+      let attrStats = { '힘': { wins: 0, games: 0, color: '#F2828C', bg: 'rgba(242,130,140,.15)' }, '민첩': { wins: 0, games: 0, color: '#7FCBA4', bg: 'rgba(127,203,164,.15)' }, '지능': { wins: 0, games: 0, color: '#8FB2E8', bg: 'rgba(143,178,232,.15)' } };
+      const ab = attrBreakdown || {};
+      for (let key in attrStats) {
+        if (ab[key]) { attrStats[key].games = ab[key].games; attrStats[key].wins = ab[key].wins; }
+      }
+      for(let key in attrStats) {
+        let ast = attrStats[key]; let wr = ast.games > 0 ? ((ast.wins / ast.games) * 100).toFixed(1) : "0.0";
+        graphContainer.innerHTML += `
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium t-hi flex items-center gap-1">${getAttrBadge(key)} 속성 <span class="text-xs font-normal t-faint">(${ast.games}전)</span></span>
+              <span class="font-medium t-brand num text-sm">${wr}%</span>
+            </div>
+            <div class="stat-bar-track" style="background-color: ${ast.bg};">
+              <div class="stat-bar-fill" style="width: ${wr}%; background-color: ${ast.color};"></div>
+            </div>
+          </div>`;
+      }
+
+      let posData = positionsData || { 'TOP': 0, 'JG': 0, 'BOT': 0, 'total': 0 };
+      let posStyles = { 'TOP': { color: '#F0A15E', bg: 'rgba(240,161,94,.15)' }, 'JG': { color: '#C99BE8', bg: 'rgba(201,155,232,.15)' }, 'BOT': { color: '#7FD4E0', bg: 'rgba(127,212,224,.15)' } };
+      ['TOP', 'JG', 'BOT'].forEach(pName => {
+        let count = posData[pName] || 0;
+        let pct = posData.total > 0 ? ((count / posData.total) * 100).toFixed(1) : "0.0";
+        let style = posStyles[pName];
+        posContainer.innerHTML += `
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium t-hi">${pName} <span class="text-xs font-normal t-faint">(${count}회 배치)</span></span>
+              <span class="font-medium num text-sm" style="color:${style.color};">${pct}%</span>
+            </div>
+            <div class="stat-bar-track" style="background-color: ${style.bg};">
+              <div class="stat-bar-fill" style="width: ${pct}%; background-color: ${style.color};"></div>
+            </div>
+          </div>`;
+      });
+
+      let tGames = parseInt(totalGames) || 0; //
+      let tMvp = parseInt(totalMvp) || 0;
+      let mvpPct = tGames > 0 ? ((tMvp / tGames) * 100).toFixed(1) : "0.0";
+
+      let streak = streakData || { currentWin: 0, maxWin: 0, currentLose: 0, maxLose: 0 };
+
+      mvpContainer.innerHTML = `
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-sm">
+            <span class="font-medium t-hi">전체 캐리력 수치 <span class="text-xs font-normal t-faint">(${tGames}전 중 ${tMvp}회 MVP)</span></span>
+            <span class="font-medium t-gold num text-sm">${mvpPct}%</span>
+          </div>
+          <div class="stat-bar-track" style="background-color: rgba(240,178,126,.15);">
+            <div class="stat-bar-fill" style="width: ${mvpPct}%; background-color: var(--gold);"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-5 mt-5 border-t brd">
+           <div class="streak-card streak-brand">
+              <div class="lbl">현재 연승 기록</div>
+              <div class="val">${streak.currentWin} <span class="text-xs font-medium">연승 중</span></div>
+           </div>
+           <div class="streak-card streak-gold">
+              <div class="lbl">역대 최고 연승</div>
+              <div class="val">${streak.maxWin} <span class="text-xs font-medium">연승 달성</span></div>
+           </div>
+
+           <div class="streak-card streak-lose">
+              <div class="lbl">현재 연패 기록</div>
+              <div class="val">${streak.currentLose} <span class="text-xs font-medium">연패 중</span></div>
+           </div>
+           <div class="streak-card streak-lose-max">
+              <div class="lbl">역대 최다 연패</div>
+              <div class="val">${streak.maxLose} <span class="text-xs font-medium">연패 달성</span></div>
+           </div>
+        </div>`;
+    }
+
+    function submitRecord() {
+      const btn = document.getElementById('submit-btn');
+      const data = {
+        season: document.getElementById('in-season').value.trim(), date: document.getElementById('in-date').value, time: document.getElementById('in-time').value,
+        teams: document.getElementById('in-team').value, pos: document.getElementById('in-pos').value, name: document.getElementById('in-name').value.trim(),
+        hero: document.getElementById('in-hero').value.trim(), k: document.getElementById('in-k').value || 0, d: document.getElementById('in-d').value || 0,
+        a: document.getElementById('in-a').value || 0, mvp: document.getElementById('in-mvp').value
+      };
+      if (!data.name || !data.hero) { alert("유저명과 캐릭터명은 필수 입력 항목입니다."); return; }
+      btn.disabled = true; btn.innerText = "시트에 전적 전송하는 중...";
+
+      google.script.run.withSuccessHandler(function(response) {
+        alert(response);
+        document.getElementById('in-name').value = ''; document.getElementById('in-hero').value = ''; document.getElementById('in-k').value = '';
+        document.getElementById('in-d').value = ''; document.getElementById('in-a').value = ''; document.getElementById('in-mvp').value = '0';
+        btn.disabled = false; btn.innerText = "전적 전송 및 통계 반영"; loadData();
+      }).addRecord(data);
+    }
+
+    function switchInputType(type) {
+      if (type === 'manual') {
+        document.getElementById('input-manual-frame').classList.remove('hidden');
+        document.getElementById('input-photo-frame').classList.add('hidden');
+        document.getElementById('toggle-input-manual').className = 'seg-btn sub-toggle-active';
+        document.getElementById('toggle-input-photo').className = 'seg-btn';
+      } else {
+        document.getElementById('input-manual-frame').classList.add('hidden');
+        document.getElementById('input-photo-frame').classList.remove('hidden');
+        document.getElementById('toggle-input-manual').className = 'seg-btn';
+        document.getElementById('toggle-input-photo').className = 'seg-btn sub-toggle-active';
+      }
+    }
+
+    function handlePhotoUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const fileName = file.name;
+      const match = fileName.match(/_(\d{2})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/);
+      if (match) {
+        const month = match[1];
+        const day = match[2];
+        const year = "20" + match[3];
+        const hours = match[4];
+        const minutes = match[5];
+
+        document.getElementById('photo-date').value = `${year}-${month}-${day}`;
+        document.getElementById('photo-time').value = `${hours}:${minutes}`;
+        document.getElementById('photo-season').value = `시즌${match[3]}`;
+      }
+
+      const statusText = document.getElementById('upload-status-text');
+      statusText.innerHTML = `<div class="spinner animate-spin rounded-full h-5 w-5 border-b-2 mx-auto mb-2"></div> 이미지 속 문자열 분석 및 스캔 중...`;
+
+      const isTga = file.name.toLowerCase().endsWith('.tga');
+
+      if (isTga) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const buffer = e.target.result;
+            const base64Data = parseTgaToDataURL(buffer);
+            sendToGoogleScript(base64Data, statusText);
+          } catch (err) {
+            console.error("TGA Parsing Error:", err);
+            alert("TGA 파일 변환 중 오류가 발생했습니다.\n상세 에러: " + err.message + "\n\n(워크래프트3의 일부 TGA 포맷이 호환되지 않을 수 있습니다.)");
+            statusText.innerHTML = `변환 실패. 다른 파일을 올려주세요.`;
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Data = e.target.result;
+          sendToGoogleScript(base64Data, statusText);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function parseTgaToDataURL(buffer) {
+      let data = new Uint8Array(buffer);
+      let offset = 0;
+      let id_length = data[offset++];
+      let color_map_type = data[offset++];
+      let image_type = data[offset++];
+      offset += 5;
+      offset += 4;
+      let width = data[offset++] | (data[offset++] << 8);
+      let height = data[offset++] | (data[offset++] << 8);
+      let pixel_depth = data[offset++];
+      let image_descriptor = data[offset++];
+
+      offset += id_length;
+
+      if (color_map_type !== 0) throw new Error("Color mapped TGA is not supported.");
+      if (image_type !== 2 && image_type !== 10) throw new Error("Only Uncompressed or RLE TrueColor TGA is supported.");
+      if (pixel_depth !== 24 && pixel_depth !== 32) throw new Error("Only 24-bit or 32-bit TGA is supported.");
+
+      let isRLE = image_type === 10;
+      let bytesPerPixel = pixel_depth / 8;
+      let pixelCount = width * height;
+
+      let canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      let ctx = canvas.getContext('2d');
+      let imgData = ctx.createImageData(width, height);
+      let pixels = imgData.data;
+
+      let currentPixel = 0;
+      if (isRLE) {
+        while (currentPixel < pixelCount && offset < data.length) {
+          let packetHeader = data[offset++];
+          let packetSize = (packetHeader & 0x7F) + 1;
+          if (packetHeader & 0x80) {
+            let b = data[offset++], g = data[offset++], r = data[offset++], a = bytesPerPixel === 4 ? data[offset++] : 255;
+            for (let i = 0; i < packetSize; i++) {
+              let idx = currentPixel * 4;
+              pixels[idx] = r; pixels[idx+1] = g; pixels[idx+2] = b; pixels[idx+3] = a;
+              currentPixel++;
+            }
+          } else {
+            for (let i = 0; i < packetSize; i++) {
+              let b = data[offset++], g = data[offset++], r = data[offset++], a = bytesPerPixel === 4 ? data[offset++] : 255;
+              let idx = currentPixel * 4;
+              pixels[idx] = r; pixels[idx+1] = g; pixels[idx+2] = b; pixels[idx+3] = a;
+              currentPixel++;
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < pixelCount; i++) {
+          let b = data[offset++], g = data[offset++], r = data[offset++], a = bytesPerPixel === 4 ? data[offset++] : 255;
+          let idx = i * 4;
+          pixels[idx] = r; pixels[idx+1] = g; pixels[idx+2] = b; pixels[idx+3] = a;
+        }
+      }
+
+      if (!(image_descriptor & 0x20)) {
+        let rowBytes = width * 4;
+        let halfHeight = Math.floor(height / 2);
+        for (let y = 0; y < halfHeight; y++) {
+          let topOffset = y * rowBytes;
+          let bottomOffset = (height - 1 - y) * rowBytes;
+          for (let x = 0; x < rowBytes; x++) {
+            let temp = pixels[topOffset + x];
+            pixels[topOffset + x] = pixels[bottomOffset + x];
+            pixels[bottomOffset + x] = temp;
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      return canvas.toDataURL('image/png');
+    }
+
+    function sendToGoogleScript(base64Data, statusText) {
+      google.script.run.withSuccessHandler(function(response) {
+        if (response.error) {
+          alert("에러: " + response.error);
+          statusText.innerHTML = `분석 실패. 다시 시도해 주세요.`;
+          return;
+        }
+        statusText.innerHTML = `글로벌 스캔 완료! 아래 표를 확인하세요.`;
+        renderPhotoOcrResult(response.players);
+      }).uploadAndAnalyzeImage(base64Data);
+    }
+
+    function renderPhotoOcrResult(players) {
+      const tbody = document.getElementById('photo-players-tbody');
+      tbody.innerHTML = '';
+      document.getElementById('photo-result-board').classList.remove('hidden');
+
+      players.forEach((p, index) => {
+        if (typeof TARGET_USERS !== 'undefined' && TARGET_USERS.length > 0 && !TARGET_USERS.includes(p.name)) {
+          return;
+        }
+
+        let defaultTeam = index < 5 ? "Win" : "Lose";
+        let defaultPos = p.pos ? p.pos : "BOT";
+
+        tbody.innerHTML += `
+          <tr class="hover-row border-b brd">
+            <td class="p-2 text-xs font-medium t-faint">${index + 1}</td>
+            <td><select class="field-sm row-team"><option value="Win" ${defaultTeam === 'Win' ? 'selected' : ''}>승리</option><option value="Lose" ${defaultTeam === 'Lose' ? 'selected' : ''}>패배</option></select></td>
+            <td><select class="field-sm row-pos"><option value="TOP" ${defaultPos === 'TOP' ? 'selected' : ''}>TOP</option><option value="JG" ${defaultPos === 'JG' ? 'selected' : ''}>JG</option><option value="BOT" ${defaultPos === 'BOT' ? 'selected' : ''}>BOT</option></select></td>
+            <td><input type="text" value="${p.name}" class="field-sm w-24 font-medium row-name"></td>
+            <td><input type="text" value="${p.hero}" class="field-sm w-24 font-medium row-hero"></td>
+            <td><input type="number" value="${p.k}" class="field-sm w-12 text-center row-k"></td>
+            <td><input type="number" value="${p.d}" class="field-sm w-12 text-center row-d"></td>
+            <td><input type="number" value="${p.a}" class="field-sm w-12 text-center row-a"></td>
+            <td><select class="field-sm row-mvp"><option value="0">X</option><option value="1">O</option></select></td>
+          </tr>`;
+      });
+    }
+
+    function submitBulkRecords() {
+      const btn = document.getElementById('photo-submit-btn'); const rows = document.getElementById('photo-players-tbody').querySelectorAll('tr');
+      const defaultSeason = document.getElementById('photo-season').value || "시즌26"; const defaultDate = document.getElementById('photo-date').value; const defaultTime = document.getElementById('photo-time').value;
+      let recordsToSend = [];
+
+      for(let i=0; i<rows.length; i++) {
+        let r = rows[i]; let name = r.querySelector('.row-name').value.trim(); let hero = r.querySelector('.row-hero').value.trim();
+        if(!name || !hero) continue;
+        recordsToSend.push({ season: defaultSeason, date: defaultDate, time: defaultTime, teams: r.querySelector('.row-team').value, pos: r.querySelector('.row-pos').value, name: name, hero: hero, k: r.querySelector('.row-k').value || 0, d: r.querySelector('.row-d').value || 0, a: r.querySelector('.row-a').value || 0, mvp: r.querySelector('.row-mvp').value });
+      }
+
+      if(recordsToSend.length === 0) { alert("등록할 유효한 유저 데이터가 없습니다."); return; }
+      btn.disabled = true; btn.innerText = "10명의 데이터를 글로벌 시트에 순차 기록하는 중...";
+      let successCount = 0;
+
+      function saveNext(index) {
+        if (index >= recordsToSend.length) {
+          alert(`총 ${successCount}명의 글로벌 경기 전적이 성공적으로 합산 반영되었습니다!`);
+          document.getElementById('photo-result-board').classList.add('hidden'); document.getElementById('photo-file-input').value = '';
+          document.getElementById('upload-status-text').innerText = "클릭하거나 이곳에 전적 스크린샷 파일을 드롭하세요";
+          btn.disabled = false; btn.innerText = "검증된 글로벌 10인 전적 일괄 등록하기"; loadData(); return;
+        }
+        google.script.run.withSuccessHandler(function(res) { if(res.indexOf("성공") !== -1) successCount++; saveNext(index + 1); }).addRecord(recordsToSend[index]);
+      }
+      saveNext(0);
+    }
+  </script>
+</body>
+</html>
